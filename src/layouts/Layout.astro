@@ -47,7 +47,7 @@ const socialImage = new URL(`/assets/social-${lang}.png`, Astro.site).href;
       knowsAbout: ['Embedded Linux', 'Yocto Project', 'Go', 'OTA updates', 'CI/CD'],
     })} />
   </head>
-  <body>
+  <body id="page-top">
     <a class="skip" href="#main">{t.skip}</a>
     <div class="page-shell">
       <header>
@@ -68,13 +68,25 @@ const socialImage = new URL(`/assets/social-${lang}.png`, Astro.site).href;
       <footer>
         <span>© {new Date().getFullYear()} Luca Padovan</span>
         <span>{t.footer}</span>
-        <a class="back-to-top" href="#main" aria-label={t.top} title={t.top}>
-          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 19V5m-6 6 6-6 6 6" />
-          </svg>
-        </a>
       </footer>
     </div>
+    <a class="back-to-top" href="#page-top" aria-label={t.top} title={t.top} hidden>
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 19V5m-6 6 6-6 6 6" />
+      </svg>
+    </a>
+    <script>
+      const backToTop = document.querySelector<HTMLAnchorElement>('.back-to-top')!;
+      const updateVisibility = () => { backToTop.hidden = window.scrollY <= 0; };
+      window.addEventListener('scroll', updateVisibility, { passive: true });
+      window.addEventListener('pageshow', updateVisibility);
+      updateVisibility();
+      backToTop.addEventListener('click', event => {
+        event.preventDefault();
+        document.querySelector<HTMLAnchorElement>('.wordmark')?.focus({ preventScroll: true });
+        window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+      });
+    </script>
     <ImageViewer lang={lang} />
   </body>
 </html>
