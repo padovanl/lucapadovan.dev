@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import ImageViewer from '../components/ImageViewer.astro';
 import { content, homePath, profile, type Language } from '../data/content';
 interface Props { lang: Language; title?: string; description?: string; path?: string; alternatePath?: string; }
 const { lang, title = 'Luca Padovan · Software Engineer', description = content[lang].description, path = homePath(lang), alternatePath = homePath(lang === 'en' ? 'it' : 'en') } = Astro.props;
@@ -74,5 +75,6 @@ const socialImage = new URL(`/assets/social-${lang}.png`, Astro.site).href;
         </a>
       </footer>
     </div>
+    <ImageViewer lang={lang} />
   </body>
 </html>

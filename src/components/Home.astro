@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import CvButton from './CvButton.astro';
+import ScreenshotGallery from './ScreenshotGallery.astro';
 import repositories from '../data/repositories.json';
 import { content, profile, projects, careers, projectPath, type Language } from '../data/content';
 const { lang = 'en' } = Astro.props as { lang?: Language };
@@ -50,11 +51,10 @@ const credentials = [
             <div class="project-copy"><h3>{project.title}</h3><p>{copy.tagline}</p><p class="description">{copy.description}</p></div>
             {copy.capabilities && <div class="qawk-capabilities"><span class="small-label">{lang === 'en' ? 'RELEASE MANAGEMENT' : 'GESTIONE DEI RILASCI'}</span><div>{copy.capabilities.map(label => <span>{label}</span>)}</div></div>}
           </div>
-          {project.image && <a class="project-image" href={project.website} target="_blank" rel="noopener noreferrer" aria-label={`${project.title}: ${t.docs}`}><img src={project.image} alt={copy.alt} width="1200" height="700" loading="lazy" /></a>}
-          {project.screenshots && <details class="demo-details screenshot-details">
-            <summary>{t.screenshots}<span aria-hidden="true">+</span></summary>
-            <div class="screenshot-grid">{project.screenshots.map(shot => <a href={shot.image} target="_blank" rel="noopener noreferrer"><img src={shot.image} alt={shot[lang].alt} width="1600" height="900" loading="lazy" /><span>{shot[lang].title}<span aria-hidden="true">↗</span></span></a>)}</div>
-          </details>}
+          {project.image && <ScreenshotGallery lang={lang} shots={[
+            { image: project.image, alt: copy.alt, title: project.name === 'auroraOS' ? 'Desktop' : `${project.title} dashboard` },
+            ...(project.screenshots ?? []).map(shot => ({ image: shot.image, alt: shot[lang].alt, title: shot[lang].title })),
+          ]} />}
           {project.demo && <details class="demo-details">
             <summary>{t.demo}<span aria-hidden="true">↗</span></summary>
             <figure>
