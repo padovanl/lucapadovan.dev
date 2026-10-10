@@ -55,6 +55,7 @@ const socialImage = new URL(`/assets/social-${lang}.png`, Astro.site).href;
           <img class="mark" src="/assets/logo.svg" alt="" width="44" height="44" /><span class="brand-name">Luca Padovan</span>
         </a>
         <nav aria-label={t.navigation}>
+          <a href={`${homePath(lang)}#experience`}>{t.experience}</a>
           <a href={`${homePath(lang)}#projects`}>{t.projects}</a>
           <a href={`${homePath(lang)}#about`}>{t.about}</a>
           <a href={`${homePath(lang)}#contact`}>{t.contact}</a>

@@ -35,7 +35,9 @@ The static site is generated in `dist/`.
 - Logo: `public/assets/logo.svg` (also used to generate the favicon and social previews)
 - Downloadable CVs: `public/cv/`
 
-Contact is through LinkedIn and GitHub. The public CV copies omit the personal email address; keep it out of replacement PDFs too.
+The homepage leads with professional experience, followed by two featured case studies and three compact project previews. Case studies document the contribution, engineering decisions, trade-offs, and technical references.
+
+Professional contact is through LinkedIn; GitHub links accompany the projects. The public CV copies omit the personal email address; keep it out of replacement PDFs too.
 
 GitHub stars and releases refresh in the browser through `public/live.js`, with a local cache and a static fallback.
 

@@ -13,8 +13,6 @@
     if (!data || !Array.isArray(data.repos)) return;
     const repos = data.repos.filter(r => !r.fork && !r.private && r.owner?.login === 'padovanl');
     if (!repos.length) return;
-    document.querySelector('[data-total-repos]').textContent = String(repos.length);
-    document.querySelector('[data-total-stars]').textContent = String(repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0));
     for (const r of repos) {
       if (!names.includes(r.name)) continue;
       document.querySelector(`[data-stars="${r.name}"]`).textContent = `☆ ${r.stargazers_count}`;

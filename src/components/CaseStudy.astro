@@ -16,9 +16,11 @@ const next = slug === 'portop' ? 'qawk' : 'portop';
       {(lang === 'en' ? ['Release channel', 'Promotion gate', 'Rollout waves', 'Device fleet'] : ['Canale di rilascio', 'Soglia di promozione', 'Rollout a ondate', 'Flotta dispositivi']).map((step, i) => <div><span class="small-label">0{i + 1}</span><strong>{step}</strong>{i < 3 && <span class="diagram-arrow" aria-hidden="true">→</span>}</div>)}
     </div>}
     <div class="case-section"><p class="eyebrow">01 / {t.problem}</p><p>{copy.problem}</p></div>
-    <div class="case-section"><p class="eyebrow">02 / {t.approach}</p><p>{copy.approach}</p></div>
-    <section class="case-decisions" aria-labelledby="decisions-title"><p class="eyebrow">03 / {t.decisions}</p><h2 id="decisions-title">{t.decisions}</h2><div>{copy.decisions.map(([title, text], i) => <article><span class="small-label">0{i + 1}</span><h3>{title}</h3><p>{text}</p></article>)}</div></section>
-    <section class="case-outcomes" aria-labelledby="outcomes-title"><p class="eyebrow">04 / {t.outcome}</p><h2 id="outcomes-title">{t.outcome}</h2><ul>{copy.outcomes.map(outcome => <li>{outcome}</li>)}</ul><p class="case-limit">{copy.limit}</p></section>
+    <div class="case-section"><p class="eyebrow">02 / {t.contribution}</p><p>{copy.contribution}</p></div>
+    <div class="case-section"><p class="eyebrow">03 / {t.approach}</p><p>{copy.approach}</p></div>
+    <section class="case-decisions" aria-labelledby="decisions-title"><p class="eyebrow">04 / {t.decisions}</p><h2 id="decisions-title">{t.decisions}</h2><div>{copy.decisions.map(([title, text], i) => <article><span class="small-label">0{i + 1}</span><h3>{title}</h3><p>{text}</p></article>)}</div></section>
+    <div class="case-section"><p class="eyebrow">05 / {t.tradeoffs}</p><p>{copy.tradeoff}</p></div>
+    <section class="case-outcomes" aria-labelledby="outcomes-title"><p class="eyebrow">06 / {t.outcome}</p><h2 id="outcomes-title">{t.outcome}</h2><ul>{copy.outcomes.map(outcome => <li>{outcome}</li>)}</ul><p class="case-limit">{copy.limit}</p><div class="case-evidence"><strong>{t.evidence}</strong><a href={study.source} target="_blank" rel="noopener noreferrer">README · {slug}</a>{'website' in study && <a href={study.website} target="_blank" rel="noopener noreferrer">{t.docs}</a>}{slug === 'qawk' && <a href={`/cv/Luca_Padovan_CV_${lang.toUpperCase()}.pdf`} download>{t.download} · PDF</a>}</div></section>
     <div class="case-source"><h2>{t.sources}</h2><div class="hero-actions"><a class="button primary" href={study.source} target="_blank" rel="noopener noreferrer">{t.repository}</a>{'website' in study && <a class="button secondary" href={study.website} target="_blank" rel="noopener noreferrer">{t.docs}</a>}</div><a class="next-study" href={projectPath(lang, next)}>{t.next}: {next} <span aria-hidden="true">→</span></a></div>
   </article>
 </Layout>

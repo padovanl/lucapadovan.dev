@@ -8,7 +8,7 @@ const { lang = 'en' } = Astro.props as { lang?: Language };
 const t = content[lang];
 const repos = repositories.filter(r => !r.fork && !r.private);
 const other = repos.filter(r => !projects.some(p => p.name === r.name));
-const stars = repos.reduce((sum, r) => sum + r.stargazers_count, 0);
+const selectedProjects = [...projects].sort((a, b) => Number(!!b.study) - Number(!!a.study));
 const credentials = [
   { name: 'PCAP', symbol: 'Py', kind: t.certification, description: 'Certified Associate in Python Programming', topic: 'Python' },
   { name: 'CPA', symbol: 'C++', kind: t.certification, description: 'C++ Certified Associate Programmer', topic: 'C++' },
@@ -24,33 +24,35 @@ const credentials = [
       <h1 id="hero-title">{t.title}<br /><span>{t.titleAccent}</span></h1>
       <p class="intro">{t.intro}</p>
       <div class="hero-actions">
-        <a class="button primary" href="#projects">{t.explore}</a>
+        <a class="button primary" href="#experience">{t.explore}</a>
         <CvButton lang={lang} />
-        <a class="button secondary github-button" href={profile.github} target="_blank" rel="noopener noreferrer">
-          <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.14.68-3.8-1.33-3.8-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.4-1.22.72-1.5-2.51-.28-5.15-1.25-5.15-5.56 0-1.23.44-2.23 1.16-3.01-.12-.29-.5-1.43.11-2.97 0 0 .95-.3 3.09 1.15a10.76 10.76 0 0 1 5.62 0c2.14-1.45 3.08-1.15 3.08-1.15.62 1.54.23 2.68.12 2.97.72.78 1.16 1.78 1.16 3.01 0 4.32-2.64 5.28-5.16 5.56.4.35.77 1.03.77 2.08v3.1c0 .3.2.65.78.54A11.25 11.25 0 0 0 12 .75Z"/></svg>
-          {t.github}
-        </a>
+        <a class="button secondary" href={profile.linkedin} target="_blank" rel="noopener noreferrer">{t.linkedinAction}</a>
       </div>
       <div class="hero-foot"><span>LINUX</span><span>YOCTO</span><span>GO</span><span>OTA</span><span>OPEN SOURCE</span></div>
     </div>
   </section>
-  <div class="stat-strip">
-    <div><strong data-total-repos>{repos.length}</strong><span>{t.repos}</span></div>
-    <div><strong data-total-stars>{stars}</strong><span>{t.stars}</span></div>
-    <div class="stat-text"><span class="small-label">{t.thread}</span><p>{t.threadText}</p></div>
-  </div>
+  <section class="experience section" id="experience" aria-labelledby="experience-title">
+    <div class="section-heading"><div><p class="eyebrow">{t.careerEyebrow}</p><h2 id="experience-title">{t.careerTitle}</h2></div><p>{t.careerIntro}</p></div>
+    <div class="career-list">{careers.map(career => <article><div class="career-date">{career[lang].date}</div><div><h3>{career.company}</h3><p class="career-role">{career.role === 'Software Engineering Intern' && lang === 'it' ? 'Tirocinio in Software Engineering' : career.role}</p><ul>{career[lang].points.map(point => <li>{point}</li>)}</ul></div></article>)}</div>
+    <div class="education-grid"><div><p class="eyebrow">{t.education}</p><h3>{t.university}</h3>{t.degrees.map(([degree, dates]) => <p>{degree}<span>{dates}</span></p>)}</div></div>
+  </section>
   <section id="projects" class="projects section" aria-labelledby="projects-title">
     <div class="section-heading"><div><p class="eyebrow">{t.selected}</p><h2 id="projects-title">{t.projectsTitle}</h2></div><p>{t.projectsIntro}</p></div>
     <div class="project-grid">
-      {projects.map((project, i) => {
+      {selectedProjects.map((project, i) => {
         const copy = project[lang];
         const repo = repos.find(r => r.name === project.name);
-        return <article class:list={['project', { 'featured-project': i === 0, 'aurora-project': i === 1, 'compact-project': !!project.demo, 'qawk-project': project.name === 'qawk' }]}>
+        return <article class:list={['project', { 'primary-project': !!project.study, 'secondary-project': !project.study, 'featured-project': i === 0, 'aurora-project': project.name === 'auroraOS', 'compact-project': !!project.demo, 'qawk-project': project.name === 'qawk' }]}>
           <div class="project-top"><span class="project-number">{String(i + 1).padStart(2, '0')}</span><span class="badge">{project.badge}</span><span class="repo-stars" data-stars={project.name}>☆ {repo?.stargazers_count ?? 0}</span></div>
           <div class={project.name === 'qawk' ? 'qawk-layout' : undefined}>
             <div class="project-copy"><h3>{project.title}</h3><p>{copy.tagline}</p><p class="description">{copy.description}</p></div>
             {copy.capabilities && <div class="qawk-capabilities"><span class="small-label">{lang === 'en' ? 'RELEASE MANAGEMENT' : 'GESTIONE DEI RILASCI'}</span><div>{copy.capabilities.map(label => <span>{label}</span>)}</div></div>}
           </div>
+          {project.name === 'qawk' && <div class="project-flow" aria-label={lang === 'en' ? 'Release pipeline: development, beta, production' : 'Pipeline di rilascio: sviluppo, beta, produzione'}>
+            <p class="small-label">{lang === 'en' ? 'RELEASE PIPELINE' : 'PIPELINE DI RILASCIO'}</p>
+            <div><span>dev</span><span aria-hidden="true">→</span><span>beta</span><span aria-hidden="true">→</span><span>prod</span></div>
+            <p>{lang === 'en' ? 'Promotion gates, staged delivery and coordinated rollback.' : 'Soglie di promozione, distribuzione graduale e rollback coordinato.'}</p>
+          </div>}
           {project.image && <ScreenshotGallery lang={lang} shots={[
             { image: project.image, alt: copy.alt, title: project.imageTitle ?? (project.name === 'auroraOS' ? 'Desktop' : `${project.title} dashboard`) },
             ...(project.screenshots ?? []).map(shot => ({ image: shot.image, thumbnail: shot.thumbnail, alt: shot[lang].alt, title: shot[lang].title })),
@@ -78,16 +80,11 @@ const credentials = [
   <section class="about section" id="about" aria-labelledby="about-title">
     <div><p class="eyebrow">{t.behind}</p><div class="about-avatar"><img src="/assets/luca-padovan.jpg" alt="Luca Padovan" width="96" height="96" loading="lazy" /></div><h2 id="about-title">{t.aboutTitle}</h2><div class="about-location"><span class="coordinate">44.49° N / 11.34° E</span><span>{lang === 'en' ? 'Bologna, Italy' : 'Bologna, Italia'}</span></div></div>
     <div class="about-copy">
-      {t.aboutParagraphs.map((p, i) => <p class={i === 0 ? 'about-lead' : undefined}>{p}</p>)}
-      <div class="personal-interests" aria-label={t.interestsLabel}>{t.interests.map(interest => <span>{interest}</span>)}</div>
-      <div class="work-focus">{t.focus.map(([title, description], i) => <div><span>{String(i + 1).padStart(2, '0')}</span><p><strong>{title}</strong>{description}</p></div>)}</div>
+      {t.aboutParagraphs.slice(0, 2).map((p, i) => <p class={i === 0 ? 'about-lead' : undefined}>{p}</p>)}
+      <p class="personal-note">{t.personalNote}</p>
+      <h3 class="skills-heading">{t.skillsTitle}</h3><div class="work-focus">{t.focus.map(([title, description], i) => <div><span>{String(i + 1).padStart(2, '0')}</span><p><strong>{title}</strong>{description}</p></div>)}</div>
       <div class="expertise">{['Linux & Yocto', 'Go', 'C / C++', 'Docker', 'Kubernetes', 'OTA', 'CI/CD', 'Prometheus', 'OpenTelemetry'].map(skill => <span>{skill}</span>)}</div>
     </div>
-  </section>
-  <section class="experience section" id="experience" aria-labelledby="experience-title">
-    <div class="section-heading"><div><p class="eyebrow">{t.careerEyebrow}</p><h2 id="experience-title">{t.careerTitle}</h2></div><p>{t.careerIntro}</p></div>
-    <div class="career-list">{careers.map(career => <article><div class="career-date">{career[lang].date}</div><div><h3>{career.company}</h3><p class="career-role">{career.role === 'Software Engineering Intern' && lang === 'it' ? 'Tirocinio in Software Engineering' : career.role}</p><ul>{career[lang].points.map(point => <li>{point}</li>)}</ul></div></article>)}</div>
-    <div class="education-grid"><div><p class="eyebrow">{t.education}</p><h3>{t.university}</h3>{t.degrees.map(([degree, dates]) => <p>{degree}<span>{dates}</span></p>)}</div></div>
   </section>
   <section class="credentials section" id="credentials" aria-labelledby="credentials-title">
     <div class="section-heading"><div><p class="eyebrow">{t.credentialsEyebrow}</p><h2 id="credentials-title">{t.credentialsTitle}</h2></div><p>{t.credentialsIntro}</p></div>
@@ -99,7 +96,7 @@ const credentials = [
       <div><h2 id="contact-title">{t.contactTitle}</h2><p>{t.contactIntro}</p></div>
       <div class="contact-actions">
         <a class="button primary" href={profile.linkedin} target="_blank" rel="noopener noreferrer">{t.linkedinAction}</a>
-        <a class="button secondary" href={profile.github} target="_blank" rel="noopener noreferrer">{t.githubAction}</a>
+
         <CvButton lang={lang} />
       </div>
     </div>
