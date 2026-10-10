@@ -1,5 +1,9 @@
 (() => {
   const names = ['portop', 'auroraOS', 'pkgtui', 'termdock', 'qawk'];
+  const italian = document.documentElement.lang === 'it';
+  const labels = italian
+    ? { more: 'altri repository', fallback: 'Esplora il repository', updated: 'Dati GitHub aggiornati al', locale: 'it-IT' }
+    : { more: 'more repositories', fallback: 'Explore the repository', updated: 'GitHub data updated', locale: 'en-GB' };
   const request = async (path) => {
     const response = await fetch(`https://api.github.com/${path}`, { headers: { Accept: 'application/vnd.github+json' }, signal: AbortSignal.timeout(7000) });
     if (!response.ok) throw new Error('GitHub unavailable');
@@ -26,13 +30,13 @@
       link.href = `https://github.com/padovanl/${encodeURIComponent(r.name)}`;
       link.target = '_blank'; link.rel = 'noopener noreferrer';
       const title = document.createElement('span'); title.textContent = r.name;
-      const description = document.createElement('span'); description.className = 'archive-description'; description.textContent = r.description || (r.language ? `${r.language} project` : 'Explore the repository');
+      const description = document.createElement('span'); description.className = 'archive-description'; description.textContent = r.description || labels.fallback;
       const language = document.createElement('span'); language.className = 'archive-language'; language.textContent = r.language || 'Code';
       link.append(title, description, language); list.append(link);
     }
-    document.querySelector('.archive-count').textContent = `${others.length} more repositories`;
+    document.querySelector('.archive-count').textContent = `${others.length} ${labels.more}`;
     const date = new Date(data.timestamp);
-    if (!Number.isNaN(date.getTime())) document.querySelector('[data-data-note]').textContent = `GitHub data updated ${date.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'})}.`;
+    if (!Number.isNaN(date.getTime())) document.querySelector('[data-data-note]').textContent = `${labels.updated} ${date.toLocaleDateString(labels.locale, {day:'numeric',month:'short',year:'numeric'})}.`;
   };
   let cached;
   try { cached = JSON.parse(localStorage.getItem('lp-github-v1') || 'null'); render(cached); } catch {}

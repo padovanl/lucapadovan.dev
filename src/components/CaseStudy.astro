@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { content, homePath, projectPath, studies, type Language, type StudySlug } from '../data/content';
+const { lang, slug } = Astro.props as { lang: Language; slug: StudySlug };
+const t = content[lang];
+const study = studies[slug];
+const copy = study[lang];
+const next = slug === 'portop' ? 'qawk' : 'portop';
+---
+<Layout lang={lang} title={`${slug} · ${copy.title} · Luca Padovan`} description={copy.intro} path={projectPath(lang, slug)} alternatePath={projectPath(lang === 'en' ? 'it' : 'en', slug)}>
+  <article class="case-study">
+    <a class="back-link" href={`${homePath(lang)}#projects`}><span aria-hidden="true">←</span> {t.back}</a>
+    <div class="case-hero"><p class="eyebrow">{t.caseEyebrow} / {slug}</p><span class="case-badge">{study.badge}</span><h1>{copy.title}</h1><p class="intro">{copy.intro}</p></div>
+    {'image' in study && <figure class="case-image"><img src={study.image} alt={copy.alt} width="1200" height="700" /></figure>}
+    {slug === 'qawk' && <div class="rollout-diagram" role="img" aria-label={lang === 'en' ? 'Release channel, promotion gate, rollout waves, device fleet. Failures halt rollout and can trigger coordinated rollback.' : 'Canale di rilascio, soglia di promozione, rollout a ondate, flotta. Gli errori arrestano il rollout e possono attivare il rollback coordinato.'}>
+      {(lang === 'en' ? ['Release channel', 'Promotion gate', 'Rollout waves', 'Device fleet'] : ['Canale di rilascio', 'Soglia di promozione', 'Rollout a ondate', 'Flotta dispositivi']).map((step, i) => <div><span class="small-label">0{i + 1}</span><strong>{step}</strong>{i < 3 && <span class="diagram-arrow" aria-hidden="true">→</span>}</div>)}
+    </div>}
+    <div class="case-section"><p class="eyebrow">01 / {t.problem}</p><p>{copy.problem}</p></div>
+    <div class="case-section"><p class="eyebrow">02 / {t.approach}</p><p>{copy.approach}</p></div>
+    <section class="case-decisions" aria-labelledby="decisions-title"><p class="eyebrow">03 / {t.decisions}</p><h2 id="decisions-title">{t.decisions}</h2><div>{copy.decisions.map(([title, text], i) => <article><span class="small-label">0{i + 1}</span><h3>{title}</h3><p>{text}</p></article>)}</div></section>
+    <section class="case-outcomes" aria-labelledby="outcomes-title"><p class="eyebrow">04 / {t.outcome}</p><h2 id="outcomes-title">{t.outcome}</h2><ul>{copy.outcomes.map(outcome => <li>{outcome}</li>)}</ul><p class="case-limit">{copy.limit}</p></section>
+    <div class="case-source"><h2>{t.sources}</h2><div class="hero-actions"><a class="button primary" href={study.source} target="_blank" rel="noopener noreferrer">{t.repository}</a>{'website' in study && <a class="button secondary" href={study.website} target="_blank" rel="noopener noreferrer">{t.docs}</a>}</div><a class="next-study" href={projectPath(lang, next)}>{t.next}: {next} <span aria-hidden="true">→</span></a></div>
+  </article>
+</Layout>

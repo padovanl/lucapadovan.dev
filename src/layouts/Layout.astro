@@ -1,0 +1,78 @@
+---
+import '../styles/global.css';
+import { content, homePath, profile, type Language } from '../data/content';
+interface Props { lang: Language; title?: string; description?: string; path?: string; alternatePath?: string; }
+const { lang, title = 'Luca Padovan · Software Engineer', description = content[lang].description, path = homePath(lang), alternatePath = homePath(lang === 'en' ? 'it' : 'en') } = Astro.props;
+const t = content[lang];
+const canonical = new URL(path, Astro.site).href;
+const alternate = new URL(alternatePath, Astro.site).href;
+const enUrl = lang === 'en' ? canonical : alternate;
+const itUrl = lang === 'it' ? canonical : alternate;
+const socialImage = new URL(`/assets/social-${lang}.png`, Astro.site).href;
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="it" href={itUrl} />
+    <link rel="alternate" hreflang="x-default" href={enUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="Luca Padovan" />
+    <meta property="og:locale" content={lang === 'en' ? 'en_GB' : 'it_IT'} />
+    <meta property="og:locale:alternate" content={lang === 'en' ? 'it_IT' : 'en_GB'} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={lang === 'en' ? 'Luca Padovan — Linux platforms and developer tools' : 'Luca Padovan — Piattaforme Linux e strumenti per sviluppatori'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="theme-color" content="#111626" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org', '@type': 'Person', name: profile.name,
+      url: 'https://lucapadovan.dev/', jobTitle: 'Platform & Senior Software Engineer',
+      sameAs: [profile.github, profile.linkedin],
+      knowsAbout: ['Embedded Linux', 'Yocto Project', 'Go', 'OTA updates', 'CI/CD'],
+    })} />
+  </head>
+  <body>
+    <a class="skip" href="#main">{t.skip}</a>
+    <div class="page-shell">
+      <header>
+        <a class="wordmark" href={homePath(lang)} aria-label={lang === 'en' ? 'Luca Padovan home' : 'Luca Padovan, pagina iniziale'}>
+          <img class="mark" src="/assets/logo.svg" alt="" width="44" height="44" /><span class="brand-name">Luca Padovan</span>
+        </a>
+        <nav aria-label={t.navigation}>
+          <a href={`${homePath(lang)}#projects`}>{t.projects}</a>
+          <a href={`${homePath(lang)}#about`}>{t.about}</a>
+          <a href={`${homePath(lang)}#contact`}>{t.contact}</a>
+        </nav>
+        <div class="language-switch" role="group" aria-label={t.language}>
+          <a href={lang === 'en' ? path : alternatePath} lang="en" hreflang="en" aria-label="English" aria-current={lang === 'en' ? 'page' : undefined}><img src="/assets/flag-gb.svg" alt="" width="20" height="14" />EN</a>
+          <a href={lang === 'it' ? path : alternatePath} lang="it" hreflang="it" aria-label="Italiano" aria-current={lang === 'it' ? 'page' : undefined}><img src="/assets/flag-it.svg" alt="" width="20" height="14" />IT</a>
+        </div>
+      </header>
+      <main id="main"><slot /></main>
+      <footer>
+        <span>© {new Date().getFullYear()} Luca Padovan</span>
+        <span>{t.footer}</span>
+        <a class="back-to-top" href="#main" aria-label={t.top} title={t.top}>
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 19V5m-6 6 6-6 6 6" />
+          </svg>
+        </a>
+      </footer>
+    </div>
+  </body>
+</html>
