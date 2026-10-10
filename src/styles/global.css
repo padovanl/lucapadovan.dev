@@ -450,3 +450,8 @@ h2{font-size:clamp(30px,3vw,40px);letter-spacing:-1px}
 .project-flow>div>span:nth-child(odd){padding:12px 16px;border:1px solid #c1b3ff35;border-radius:8px;color:var(--accent);background:#c1b3ff08}
 .project-flow>p:last-child{font-size:14px;color:var(--muted);line-height:1.7;margin:20px 0 0}
 @media(max-width:550px){.project-flow{padding:18px}.project-flow>div>span:nth-child(odd){padding:10px 12px}}
+
+/* Labels use an arrow cursor; interactive pills retain the pointer. */
+.badge,.case-badge,.hero-foot span,.expertise span,.qawk-capabilities>div>span,.credential-symbol,.credential-kind,.project-flow>div>span{cursor:default;-webkit-user-select:none;user-select:none}
+.button,nav a,.language-switch a,.project-links a,.screenshot-tabs button,.archive summary{cursor:pointer;-webkit-user-select:none;user-select:none}
+.button *,nav a *,.language-switch a *,.project-links a *,.screenshot-tabs button *,.archive summary *{cursor:inherit;-webkit-user-select:none;user-select:none}
