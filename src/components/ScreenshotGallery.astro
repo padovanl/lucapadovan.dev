@@ -1,13 +1,13 @@
 ---
 import type { Language } from '../data/content';
-interface Shot { image: string; thumbnail?: string; alt: string; title: string }
+interface Shot { image: string; thumbnail?: string; video?: string; alt: string; title: string }
 const { shots, lang } = Astro.props as { shots: Shot[]; lang: Language };
-const enlarge = lang === 'en' ? 'Enlarge screenshot' : 'Ingrandisci screenshot';
+const enlarge = shots[0].video ? (lang === 'en' ? 'Watch demo' : 'Guarda la demo') : (lang === 'en' ? 'Enlarge screenshot' : 'Ingrandisci screenshot');
 ---
 <div class="screenshot-gallery" data-gallery>
   <button class="project-image screenshot-open" type="button" data-zoom data-images={JSON.stringify(shots)} data-index="0" data-zoom-label={enlarge} aria-label={`${enlarge}: ${shots[0].alt}`}>
     <img src={shots[0].image} alt={shots[0].alt} width="1600" height="900" loading="lazy" />
-    <span class="zoom-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" /></svg></span>
+    {shots[0].video ? <span class="demo-play"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>{lang === 'en' ? 'Watch demo' : 'Guarda la demo'}</span> : <span class="zoom-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" /></svg></span>}
   </button>
   {shots.length > 1 && <div class="screenshot-tabs" role="group" aria-label={lang === 'en' ? 'Choose screenshot' : 'Scegli screenshot'}>{shots.map((shot, index) => <button type="button" data-shot={index} aria-pressed={index === 0}><img src={shot.thumbnail ?? shot.image} alt="" width="48" height="27" loading="lazy" /><span>{shot.title}</span></button>)}</div>}
 </div>

@@ -2,27 +2,40 @@
 import type { Language } from '../data/content';
 const { lang } = Astro.props as { lang: Language };
 ---
-<dialog class="image-viewer" aria-label={lang === 'en' ? 'Screenshot viewer' : 'Visualizzatore screenshot'}>
+<dialog class="image-viewer" aria-label={lang === 'en' ? 'Image and demo viewer' : 'Visualizzatore immagini e demo'}>
   <div class="viewer-toolbar">
     <p class="viewer-title" aria-live="polite"></p>
     <div class="viewer-controls">
       <button type="button" data-previous aria-label={lang === 'en' ? 'Previous screenshot' : 'Screenshot precedente'}><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m14 6-6 6 6 6" /></svg></button>
       <button type="button" data-next aria-label={lang === 'en' ? 'Next screenshot' : 'Screenshot successivo'}><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m10 6 6 6-6 6" /></svg></button>
-      <button type="button" data-close aria-label={lang === 'en' ? 'Close screenshot' : 'Chiudi screenshot'} autofocus><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 6 12 12M6 18 18 6" /></svg></button>
+      <button type="button" data-close aria-label={lang === 'en' ? 'Close preview' : 'Chiudi anteprima'} autofocus><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 6 12 12M6 18 18 6" /></svg></button>
     </div>
   </div>
   <img class="viewer-image" alt="" />
+  <video class="viewer-video" hidden controls playsinline preload="metadata"></video>
 </dialog>
 <script>
   const dialog = document.querySelector<HTMLDialogElement>('.image-viewer')!;
   const image = dialog.querySelector<HTMLImageElement>('.viewer-image')!;
+  const video = dialog.querySelector<HTMLVideoElement>('.viewer-video')!;
   const title = dialog.querySelector<HTMLElement>('.viewer-title')!;
   const previous = dialog.querySelector<HTMLButtonElement>('[data-previous]')!;
   const next = dialog.querySelector<HTMLButtonElement>('[data-next]')!;
-  let shots: { image: string; alt: string; title: string }[] = [];
+  let shots: { image: string; video?: string; alt: string; title: string }[] = [];
   let index = 0;
   let closing = false;
   const render = () => {
+    video.pause();
+    image.hidden = !!shots[index].video;
+    video.hidden = !shots[index].video;
+    if (shots[index].video) {
+      video.src = shots[index].video!;
+      video.poster = shots[index].image;
+      video.setAttribute('aria-label', shots[index].alt);
+    } else {
+      video.removeAttribute('src');
+      video.load();
+    }
     image.src = shots[index].image;
     image.alt = shots[index].alt;
     title.textContent = shots.length > 1 ? `${shots[index].title} · ${index + 1} / ${shots.length}` : shots[index].title;
@@ -31,6 +44,7 @@ const { lang } = Astro.props as { lang: Language };
   const close = () => {
     if (closing || !dialog.open) return;
     closing = true;
+    video.pause();
     dialog.classList.add('is-closing');
     setTimeout(() => {
       dialog.close();
@@ -46,6 +60,7 @@ const { lang } = Astro.props as { lang: Language };
       render();
       document.documentElement.classList.add('viewer-open');
       dialog.showModal();
+      if (shots[index].video) void video.play().catch(() => {});
     });
   });
   dialog.querySelector('[data-close]')!.addEventListener('click', close);
@@ -55,6 +70,6 @@ const { lang } = Astro.props as { lang: Language };
   previous.addEventListener('click', () => move(-1));
   next.addEventListener('click', () => move(1));
   dialog.addEventListener('keydown', event => {
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); move(event.key === 'ArrowLeft' ? -1 : 1); }
+    if (shots.length > 1 && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) { event.preventDefault(); move(event.key === 'ArrowLeft' ? -1 : 1); }
   });
 </script>

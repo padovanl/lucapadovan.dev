@@ -55,16 +55,11 @@ const credentials = [
             { image: project.image, alt: copy.alt, title: project.imageTitle ?? (project.name === 'auroraOS' ? 'Desktop' : `${project.title} dashboard`) },
             ...(project.screenshots ?? []).map(shot => ({ image: shot.image, thumbnail: shot.thumbnail, alt: shot[lang].alt, title: shot[lang].title })),
           ]} />}
-          {project.demo && <details class="demo-details">
-            <summary>{t.demo}<span aria-hidden="true">↗</span></summary>
-            <figure>
-              <video controls playsinline preload="none" poster={`/assets/demos/${project.demo}-poster.webp`} aria-label={copy.alt}>
-                <source src={`/assets/demos/${project.demo}.mp4`} type="video/mp4" />
-                <a href={`/assets/demos/${project.demo}.mp4`}>{t.demoFallback}</a>
-              </video>
-              <figcaption>{t.demoCaption}</figcaption>
-            </figure>
-          </details>}
+          {project.demo && <ScreenshotGallery lang={lang} shots={[{
+            image: `/assets/demos/${project.demo}-poster.webp`,
+            video: `/assets/demos/${project.demo}.mp4`,
+            alt: copy.alt, title: `${project.title} · ${t.demo}`,
+          }]} />}
           <div class="project-links">
             {project.study && <a class="study-link" href={projectPath(lang, project.study)}>{t.caseStudy} <span aria-hidden="true">→</span></a>}
             <a href={`https://github.com/padovanl/${project.name}`} target="_blank" rel="noopener noreferrer">{t.repository}</a>
@@ -110,12 +105,4 @@ const credentials = [
     </div>
   </section>
   <script is:inline src="/live.js" defer></script>
-  <script>
-    document.querySelectorAll<HTMLDetailsElement>('.demo-details').forEach(details => {
-      const video = details.querySelector('video');
-      details.addEventListener('toggle', () => {
-        if (!details.open) video?.pause();
-      });
-    });
-  </script>
 </Layout>
