@@ -59,7 +59,8 @@ const socialImage = new URL(`/assets/social-${lang}.png`, Astro.site).href;
           <a href={`${homePath(lang)}#about`}>{t.about}</a>
           <a href={`${homePath(lang)}#contact`}>{t.contact}</a>
         </nav>
-        <div class="language-switch" role="group" aria-label={t.language}>
+        <div class="language-switch" data-language={lang} role="group" aria-label={t.language}>
+          <span class="language-thumb" aria-hidden="true"></span>
           <a href={lang === 'en' ? path : alternatePath} lang="en" hreflang="en" aria-label="English" aria-current={lang === 'en' ? 'page' : undefined}><img src="/assets/flag-gb.svg" alt="" width="20" height="14" />EN</a>
           <a href={lang === 'it' ? path : alternatePath} lang="it" hreflang="it" aria-label="Italiano" aria-current={lang === 'it' ? 'page' : undefined}><img src="/assets/flag-it.svg" alt="" width="20" height="14" />IT</a>
         </div>
@@ -76,6 +77,35 @@ const socialImage = new URL(`/assets/social-${lang}.png`, Astro.site).href;
       </svg>
     </a>
     <script>
+      const languageSwitch = document.querySelector<HTMLElement>('.language-switch')!;
+      languageSwitch.addEventListener('click', event => {
+        const link = (event.target as Element).closest<HTMLAnchorElement>('a');
+        if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+        if (link.hasAttribute('aria-current')) { event.preventDefault(); return; }
+        // Native document transitions keep navigation, history and scripts intact.
+        // Older browsers get the same sliding control and a short page fade.
+        if ('onpagereveal' in window || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        event.preventDefault();
+        if (languageSwitch.dataset.navigating) return;
+        languageSwitch.dataset.navigating = 'true';
+        languageSwitch.dataset.language = link.lang;
+        document.querySelector('main')?.animate(
+          [{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(-6px)' }],
+          { duration: 180, fill: 'forwards', easing: 'ease-out' },
+        );
+        setTimeout(() => window.location.assign(link.href), 180);
+      });
+      window.addEventListener('pageshow', event => {
+        languageSwitch.dataset.language = document.documentElement.lang;
+        delete languageSwitch.dataset.navigating;
+        document.querySelector('main')?.getAnimations().forEach(animation => animation.cancel());
+        if (!event.persisted && !('onpagereveal' in window) && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.querySelector('main')?.animate(
+            [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'translateY(0)' }],
+            { duration: 230, easing: 'ease-out' },
+          );
+        }
+      });
       const backToTop = document.querySelector<HTMLAnchorElement>('.back-to-top')!;
       const updateVisibility = () => { backToTop.hidden = window.scrollY <= 0; };
       window.addEventListener('scroll', updateVisibility, { passive: true });
