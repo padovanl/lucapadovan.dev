@@ -52,8 +52,8 @@ const credentials = [
             {copy.capabilities && <div class="qawk-capabilities"><span class="small-label">{lang === 'en' ? 'RELEASE MANAGEMENT' : 'GESTIONE DEI RILASCI'}</span><div>{copy.capabilities.map(label => <span>{label}</span>)}</div></div>}
           </div>
           {project.image && <ScreenshotGallery lang={lang} shots={[
-            { image: project.image, alt: copy.alt, title: project.name === 'auroraOS' ? 'Desktop' : `${project.title} dashboard` },
-            ...(project.screenshots ?? []).map(shot => ({ image: shot.image, alt: shot[lang].alt, title: shot[lang].title })),
+            { image: project.image, alt: copy.alt, title: project.imageTitle ?? (project.name === 'auroraOS' ? 'Desktop' : `${project.title} dashboard`) },
+            ...(project.screenshots ?? []).map(shot => ({ image: shot.image, thumbnail: shot.thumbnail, alt: shot[lang].alt, title: shot[lang].title })),
           ]} />}
           {project.demo && <details class="demo-details">
             <summary>{t.demo}<span aria-hidden="true">↗</span></summary>

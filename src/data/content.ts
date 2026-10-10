@@ -83,15 +83,19 @@ export const content = {
 
 interface ProjectCopy { tagline: string; description: string; alt: string; capabilities?: string[]; }
 interface Project {
-  name: string; title: string; badge: string; image?: string; website?: string;
+  name: string; title: string; badge: string; image?: string; imageTitle?: string; website?: string;
   study?: string; demo?: string; en: ProjectCopy; it: ProjectCopy;
-  screenshots?: { image: string; en: { title: string; alt: string }; it: { title: string; alt: string } }[];
+  screenshots?: { image: string; thumbnail?: string; en: { title: string; alt: string }; it: { title: string; alt: string } }[];
 }
 export const projects: Project[] = [
   {
-    name: 'portop', title: 'portop', badge: 'NETWORKING · GO', image: '/assets/portop-dashboard.png', website: 'https://padovanl.github.io/portop/', study: 'portop',
-    en: { tagline: 'What’s really using your ports?', description: 'Inspect ports, processes, systemd services, and Docker containers in a terminal interface, web dashboard, or Cockpit.', alt: 'Portop dashboard showing ports, processes, and services' },
-    it: { tagline: 'Cosa sta usando davvero le tue porte?', description: 'Esplora porte, processi, servizi systemd e container Docker dal terminale, dalla dashboard web o da Cockpit.', alt: 'Dashboard di Portop con porte, processi e servizi' },
+    name: 'portop', title: 'portop', badge: 'NETWORKING · GO', image: '/assets/portop-web-dashboard.webp', imageTitle: 'Web', website: 'https://padovanl.github.io/portop/', study: 'portop',
+    en: { tagline: 'What’s really using your ports?', description: 'Inspect ports, processes, systemd services, and Docker containers in a terminal interface, web dashboard, or Cockpit.', alt: 'Portop web dashboard showing network ports and process details' },
+    it: { tagline: 'Cosa sta usando davvero le tue porte?', description: 'Esplora porte, processi, servizi systemd e container Docker dal terminale, dalla dashboard web o da Cockpit.', alt: 'Dashboard web di Portop con porte di rete e dettagli dei processi' },
+    screenshots: [
+      { image: '/assets/demos/portop.gif', thumbnail: '/assets/demos/portop-poster.webp', en: { title: 'Terminal', alt: 'Animated Portop terminal demo showing filtering, process inspection, and confirmation dialogs' }, it: { title: 'Terminale', alt: 'Demo animata di Portop nel terminale con filtri, ispezione dei processi e finestre di conferma' } },
+      { image: '/assets/portop-cockpit.webp', en: { title: 'Cockpit', alt: 'Portop integrated into Cockpit with the network ports table and navigation sidebar' }, it: { title: 'Cockpit', alt: 'Portop integrato in Cockpit con la tabella delle porte di rete e la barra di navigazione' } },
+    ],
   },
   {
     name: 'auroraOS', title: 'Aurora OS', badge: 'LINUX · DEBIAN', image: '/assets/aurora-desktop.webp', website: 'https://padovanl.github.io/auroraOS/',
@@ -160,7 +164,7 @@ export const careers = [
 // Editorial summaries grounded in the supplied CV and linked project documentation.
 export const studies = {
   portop: {
-    badge: 'GO · LINUX · DEVELOPER TOOLS', image: '/assets/portop-dashboard.png',
+    badge: 'GO · LINUX · DEVELOPER TOOLS', image: '/assets/portop-web-dashboard.webp',
     source: 'https://github.com/padovanl/portop#readme', website: 'https://padovanl.github.io/portop/',
     en: {
       title: 'From an open port to the process behind it.',
